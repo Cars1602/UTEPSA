@@ -1,0 +1,202 @@
+[
+  {
+    "caso": "Suplantacion con @",
+    "tipo": "url",
+    "esperado_alerta": true,
+    "riesgo": 95,
+    "alerta_60": true,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "MALICIOSO / PHISHING",
+    "entrada": {
+      "text": "https://accounts.google.com@192.0.2.10/login"
+    }
+  },
+  {
+    "caso": "Urgencia y dominio falso",
+    "tipo": "url",
+    "esperado_alerta": true,
+    "riesgo": 100,
+    "alerta_60": true,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "MALICIOSO / PHISHING",
+    "entrada": {
+      "text": "URGENTE: tu cuenta sera bloqueada. Verifica tu clave en http://bancounion-seguridad-bo.xyz/login"
+    }
+  },
+  {
+    "caso": "Descarga APK falsa",
+    "tipo": "url",
+    "esperado_alerta": true,
+    "riesgo": 100,
+    "alerta_60": true,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "MALICIOSO / PHISHING",
+    "entrada": {
+      "text": "Ganaste una beca: instala http://becas-utepsa-bolivia.top/bono.apk"
+    }
+  },
+  {
+    "caso": "Microsoft con cero",
+    "tipo": "url",
+    "esperado_alerta": true,
+    "riesgo": 100,
+    "alerta_60": true,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "MALICIOSO / PHISHING",
+    "entrada": {
+      "text": "Tu contraseña expira: https://login-micros0ft-office365.support/verify"
+    }
+  },
+  {
+    "caso": "Portal universidad",
+    "tipo": "url",
+    "esperado_alerta": false,
+    "riesgo": 0,
+    "alerta_60": false,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "SEGURO / LEGÍTIMO",
+    "entrada": {
+      "text": "https://www.utepsa.edu/v2/"
+    }
+  },
+  {
+    "caso": "Documentacion Microsoft",
+    "tipo": "url",
+    "esperado_alerta": false,
+    "riesgo": 0,
+    "alerta_60": false,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "SEGURO / LEGÍTIMO",
+    "entrada": {
+      "text": "https://learn.microsoft.com/es-es/security/"
+    }
+  },
+  {
+    "caso": "GitHub OWASP",
+    "tipo": "url",
+    "esperado_alerta": false,
+    "riesgo": 0,
+    "alerta_60": false,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "SEGURO / LEGÍTIMO",
+    "entrada": {
+      "text": "https://github.com/OWASP/Top10"
+    }
+  },
+  {
+    "caso": "Mensaje sin enlace",
+    "tipo": "url",
+    "esperado_alerta": false,
+    "riesgo": 0,
+    "alerta_60": false,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "SEGURO / LEGÍTIMO",
+    "entrada": {
+      "text": "Hola, nos vemos mañana en la universidad."
+    }
+  },
+  {
+    "caso": "Permiso ilimitado",
+    "tipo": "wallet",
+    "esperado_alerta": true,
+    "riesgo": 95,
+    "alerta_60": true,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "TRANSACCIÓN QR / WALLET MALICIOSA",
+    "entrada": {
+      "payload": "ethereum:0x1111111111111111111111111111111111111111@1/approve?spender=0x2222222222222222222222222222222222222222&uint256=UNLIMITED"
+    }
+  },
+  {
+    "caso": "Direccion envenenada",
+    "tipo": "wallet",
+    "esperado_alerta": true,
+    "riesgo": 90,
+    "alerta_60": true,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "TRANSACCIÓN QR / WALLET MALICIOSA",
+    "entrada": {
+      "payload": "0x71C80000009999888877776666555500000089A2",
+      "trusted_wallet": "0x71C845aB912cF40192837465aBcDeF12345689A2"
+    }
+  },
+  {
+    "caso": "Direccion coincidente",
+    "tipo": "wallet",
+    "esperado_alerta": false,
+    "riesgo": 0,
+    "alerta_60": false,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "SIN SEÑALES FUERTES DETECTADAS",
+    "entrada": {
+      "payload": "0x71C845aB912cF40192837465aBcDeF12345689A2",
+      "trusted_wallet": "0x71C845aB912cF40192837465aBcDeF12345689A2"
+    }
+  },
+  {
+    "caso": "Vinculacion WhatsApp legitima posible",
+    "tipo": "wallet",
+    "esperado_alerta": false,
+    "riesgo": 25,
+    "alerta_60": false,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "SOSPECHOSA / VERIFICAR",
+    "entrada": {
+      "payload": "whatsapp://link-device?token=DEMO"
+    }
+  },
+  {
+    "caso": "Approve limitado no necesariamente fraude",
+    "tipo": "wallet",
+    "esperado_alerta": false,
+    "riesgo": 25,
+    "alerta_60": false,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "SOSPECHOSA / VERIFICAR",
+    "entrada": {
+      "payload": "ethereum:0x1111111111111111111111111111111111111111@1/approve?uint256=1"
+    }
+  },
+  {
+    "caso": "Direccion distinta a referencia",
+    "tipo": "wallet",
+    "esperado_alerta": false,
+    "riesgo": 25,
+    "alerta_60": false,
+    "coincide": true,
+    "http": 200,
+    "veredicto": "SOSPECHOSA / VERIFICAR",
+    "entrada": {
+      "payload": "0x2222222222222222222222222222222222222222",
+      "trusted_wallet": "0x1111111111111111111111111111111111111111"
+    }
+  },
+  {
+    "caso": "vacio",
+    "http": 400,
+    "validacion_correcta": true
+  },
+  {
+    "caso": "tipo incorrecto",
+    "http": 400,
+    "validacion_correcta": true
+  },
+  {
+    "caso": "Webhook simulado",
+    "estado": "accepted",
+    "correcto": true
+  }
+]

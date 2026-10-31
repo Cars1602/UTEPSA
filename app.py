@@ -139,16 +139,24 @@ def api_get_presets():
 
 @app.route("/api/analyze-url", methods=["POST"])
 def api_analyze_url():
-    data = request.get_json(force=True) or {}
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify(error="Introduce datos válidos"), 400
     text = data.get("text", "")
+    if not isinstance(text, str) or not text.strip() or len(text) > 12000:
+        return jsonify(error="Introduce un mensaje o enlace válido"), 400
     return jsonify(with_notification(analyze_url_and_message(text), "enlace"))
 
 
 @app.route("/api/analyze-qr-wallet", methods=["POST"])
 def api_analyze_qr_wallet():
-    data = request.get_json(force=True) or {}
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify(error="Introduce datos válidos"), 400
     payload = data.get("payload", "")
     trusted_wallet = data.get("trusted_wallet", "")
+    if not isinstance(payload, str) or not payload.strip() or len(payload) > 12000 or not isinstance(trusted_wallet, str):
+        return jsonify(error="Introduce un contenido de wallet válido"), 400
     return jsonify(with_notification(analyze_qr_and_wallet(payload, trusted_wallet), "wallet"))
 
 
@@ -159,7 +167,9 @@ def api_scan_real_wifi():
 
 @app.route("/api/wifi/simulate", methods=["POST"])
 def api_simulate_wifi():
-    data = request.get_json(force=True) or {}
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify(error="Introduce datos válidos"), 400
     scenario_id = data.get("scenario_id", "mitm_arp")
     return jsonify(simulate_wifi_scenario(scenario_id))
 

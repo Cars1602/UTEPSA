@@ -985,7 +985,7 @@ def analyze_qr_and_wallet(payload_input: str, trusted_wallet: str = "") -> Dict[
         action_function = "VINCULAR CUENTA A DISPOSITIVO EXTERNO"
 
     # REGLA 1: Smart Contract Wallet Drainer (approve / setApprovalForAll ilimitado)
-    if re.search(r"(approve|setapprovalforall|unlimited|ffffffffffffffff)", payload, re.IGNORECASE):
+    if re.search(r"(unlimited|ffffffffffffffff|setapprovalforall)", payload, re.IGNORECASE):
         risk_score += 95
         action_function = "APPROVE ILIMITADO (VACIADO DE WALLET)"
         amount_detected = "ILIMITADO (100% de tus fondos / USDT)"
@@ -1021,6 +1021,13 @@ def analyze_qr_and_wallet(payload_input: str, trusted_wallet: str = "") -> Dict[
                 "mitre": "T1036.005 (Address Masquerading)",
             })
 
+    if candidate_addr and trusted and candidate_addr.lower() != trusted.lower() and not poisoning_comparison:
+        risk_score += 25
+        indicators.append({"id": "WAL-MISMATCH", "title": "La dirección no coincide con tu referencia", "explanation": "Confirma el destino completo por un canal oficial.", "severity": "MEDIO"})
+    if re.search(r"approve", payload, re.I) and not re.search(r"unlimited|ffffffffffffffff", payload, re.I):
+        risk_score += 25
+        indicators.append({"id": "WAL-APPROVE", "title": "Permiso de tokens: revisa el límite", "explanation": "Un permiso puede ser legítimo; verifica destinatario y cantidad.", "severity": "MEDIO"})
+
     # REGLA 3: Lista negra de Wallets reportadas por estafa/ransomware
     if candidate_addr and candidate_addr.lower() in BLACKLISTED_WALLETS:
         info = BLACKLISTED_WALLETS[candidate_addr.lower()]
@@ -1048,13 +1055,13 @@ def analyze_qr_and_wallet(payload_input: str, trusted_wallet: str = "") -> Dict[
 
     # REGLA 5: QRLJacking (Robo de sesión vía QR)
     if payload.lower().startswith("whatsapp://") or "link-device" in payload.lower():
-        risk_score += 95
+        risk_score += 25
         indicators.append({
             "id": "QR-SESSION-05",
             "severity": "CRITICO",
-            "title": "Secuestro de Cuenta vía Código QR de Vinculación (QRLJacking)",
+            "title": "Vinculación de dispositivo: confirma que la solicitaste",
             "evidence": payload[:70],
-            "explanation": "El código QR contiene un token para vincular tu cuenta a un navegador remoto del atacante.",
+            "explanation": "Vincula solo un dispositivo de confianza cuando tú iniciaste la conexión. Este patrón por sí solo no prueba fraude.",
             "mitre": "T1185 (Session Hijacking / QRLJacking)",
         })
 
@@ -1066,8 +1073,8 @@ def analyze_qr_and_wallet(payload_input: str, trusted_wallet: str = "") -> Dict[
         verdict = "SOSPECHOSA / VERIFICAR"
         recommendation = "Verifica carácter por carácter la dirección destino antes de confirmar."
     else:
-        verdict = "WALLET / QR VERIFICADO Y SEGURO"
-        recommendation = "La dirección y estructura del QR son legítimas y no presentan permisos ocultos."
+        verdict = "SIN SEÑALES FUERTES DETECTADAS"
+        recommendation = "No se detectaron señales fuertes. Confirma dirección y red antes de continuar."
 
     return {
         "raw_payload": payload,
