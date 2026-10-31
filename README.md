@@ -2,6 +2,21 @@
 
 Aplicación de protección digital y criptomonedas desarrollada para el Hackathon UTEPSA. Ayuda a revisar mensajes, enlaces y destinos de wallet antes de abrir, compartir o firmar una operación.
 
+## Capturas de la aplicación y del flujo
+
+### Inicio de Faro
+![Pantalla principal de Faro](docs/images/faro-inicio.png)
+
+### Detección de phishing
+Ejemplo de laboratorio con una URL que oculta el destino mediante `@`. La captura muestra el puntaje y la evidencia; no confirma el envío de notificaciones.
+
+![Resultado de análisis y señales de riesgo](docs/images/faro-analisis.png)
+
+### Flujo WhatsApp y Gmail en n8n
+Captura del flujo instalado en AWS, proporcionada durante el desarrollo. Incluye generación de QR, recepción de incidentes, priorización y ramas de WhatsApp/Gmail. Los avisos y pasos de configuración reflejan que las integraciones todavía están pendientes de activación. La nota de la captura conserva un destinatario anterior; el destino debe configurarse en el nodo Gmail.
+
+![Flujo de WhatsApp por QR y alertas de Gmail en n8n](docs/images/n8n-whatsapp-gmail.png)
+
 ## Público objetivo
 Estudiantes, personas que empiezan a usar criptomonedas y usuarios de wallets que necesitan entender señales de phishing con lenguaje sencillo. También sirve como demostración educativa para equipos de soporte y seguridad.
 
