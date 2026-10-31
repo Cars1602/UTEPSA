@@ -132,3 +132,6 @@ Se probaron inicio y recursos con Flask test client, análisis de enlaces y wall
 
 ## Seguridad de publicación
 Este repositorio excluye contraseñas, claves, sesiones, códigos QR y paquetes generados. Las credenciales se configuran en n8n o en variables del servidor. No se publica la base de datos ni los archivos privados del servidor. Antes de activar notificaciones sobre una app pública, aplica autenticación, límites de frecuencia y control de duplicados para evitar abuso y alertas repetidas.
+
+## Análisis opcional con OpenAI
+La casilla Usar IA envía hasta 6000 caracteres a OpenAI Responses con salida estructurada y store=false. Configura OPENAI_API_KEY y OPENAI_MODEL en el entorno privado del servidor; nunca en el navegador. El puntaje final conserva el mayor entre reglas e IA y las alertas existentes usan ese puntaje. Sin clave/modelo o ante fallos se conservan las reglas. No garantiza detección. No se ha probado con una clave real. OpenAI no envía SMS: n8n distribuye las alertas a Evolution/WhatsApp, Gmail o Twilio según el flujo configurado.

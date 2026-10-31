@@ -6,6 +6,7 @@ Corre por defecto en http://127.0.0.1:5060
 
 from __future__ import annotations
 import os
+from ai_detector import enrich
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
@@ -145,7 +146,7 @@ def api_analyze_url():
     text = data.get("text", "")
     if not isinstance(text, str) or not text.strip() or len(text) > 12000:
         return jsonify(error="Introduce un mensaje o enlace válido"), 400
-    return jsonify(with_notification(analyze_url_and_message(text), "enlace"))
+    return jsonify(with_notification(enrich(analyze_url_and_message(text), text, "enlace", data.get("use_ai") is True), "enlace"))
 
 
 @app.route("/api/analyze-qr-wallet", methods=["POST"])
@@ -157,7 +158,7 @@ def api_analyze_qr_wallet():
     trusted_wallet = data.get("trusted_wallet", "")
     if not isinstance(payload, str) or not payload.strip() or len(payload) > 12000 or not isinstance(trusted_wallet, str):
         return jsonify(error="Introduce un contenido de wallet válido"), 400
-    return jsonify(with_notification(analyze_qr_and_wallet(payload, trusted_wallet), "wallet"))
+    return jsonify(with_notification(enrich(analyze_qr_and_wallet(payload, trusted_wallet), payload, "wallet", data.get("use_ai") is True), "wallet"))
 
 
 @app.route("/api/wifi/scan-real", methods=["GET", "POST"])
