@@ -135,3 +135,7 @@ Este repositorio excluye contraseñas, claves, sesiones, códigos QR y paquetes 
 
 ## Análisis opcional con OpenAI
 La casilla Usar IA envía hasta 6000 caracteres a OpenAI Responses con salida estructurada y store=false. Configura OPENAI_API_KEY y OPENAI_MODEL en el entorno privado del servidor; nunca en el navegador. El puntaje final conserva el mayor entre reglas e IA y las alertas existentes usan ese puntaje. Sin clave/modelo o ante fallos se conservan las reglas. No garantiza detección. No se ha probado con una clave real. OpenAI no envía SMS: n8n distribuye las alertas a Evolution/WhatsApp, Gmail o Twilio según el flujo configurado.
+
+## Número manual y conexión del celular
+La interfaz permite introducir un número con código de país y autorizar notificaciones durante la sesión. El backend solo acepta números presentes en FARO_ALLOWED_WHATSAPP para evitar envíos arbitrarios desde la web pública. El flujo n8n debe conservar whatsapp_number al priorizar y usarlo en el nodo Evolution. La plantilla local incluye ese mapeo; el flujo remoto requiere actualizarse.
+La web muestra online/offline y, si el navegador los expone, tipo y calidad estimada de conexión. No lee SSID, no audita el Wi-Fi del teléfono ni genera alertas de intrusión de red. Esa función exige una aplicación nativa con permisos adecuados.

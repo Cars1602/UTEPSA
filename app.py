@@ -105,8 +105,21 @@ def with_notification(result, category):
         return result
     if not url or not token:
         return result
+    event = {"risk_score": result["risk_score"], "category": category}
+    data = request.get_json(silent=True) or {}
+    if data.get("notification_consent") is True:
+        import re
+        phone = data.get("whatsapp_number", "")
+        if not isinstance(phone, str) or not re.fullmatch(r"\+[1-9]\d{7,14}", phone):
+            result["notification"] = "invalid_recipient"
+            return result
+        allowed = {p.strip() for p in os.environ.get("FARO_ALLOWED_WHATSAPP", "").split(",")}
+        if phone not in allowed:
+            result["notification"] = "recipient_not_enabled"
+            return result
+        event["whatsapp_number"] = phone.lstrip("+")
     try:
-        r = requests.post(url, json={"risk_score": result["risk_score"], "category": category},
+        r = requests.post(url, json=event,
                           headers={"X-Faro-Token": token}, timeout=8, allow_redirects=False)
         result["notification"] = "accepted" if 200 <= r.status_code < 300 else "failed"
     except requests.RequestException:
