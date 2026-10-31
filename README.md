@@ -139,3 +139,13 @@ La casilla Usar IA envía hasta 6000 caracteres a OpenAI Responses con salida es
 ## Número manual y conexión del celular
 La interfaz permite introducir un número con código de país y autorizar notificaciones durante la sesión. El backend solo acepta números presentes en FARO_ALLOWED_WHATSAPP para evitar envíos arbitrarios desde la web pública. El flujo n8n debe conservar whatsapp_number al priorizar y usarlo en el nodo Evolution. La plantilla local incluye ese mapeo; el flujo remoto requiere actualizarse.
 La web muestra online/offline y, si el navegador los expone, tipo y calidad estimada de conexión. No lee SSID, no audita el Wi-Fi del teléfono ni genera alertas de intrusión de red. Esa función exige una aplicación nativa con permisos adecuados.
+
+## App Android nativa
+El proyecto original está en `C:\android studio app\Controlremotobasurero`; una copia de su código se incluye en `android/`. Abre esa carpeta con Android Studio, configura tu SDK local y compila `assembleDebug`. No es una WebView de Faro.
+
+- Pantalla QR: Escanear QR abre cámara; Galería decodifica una imagen local con ZXing sin abrir el destino.
+- QR y Protección: número WhatsApp con país, consentimiento y botón para solicitar alerta al backend HTTPS. El servidor decide el riesgo y la habilitación del destinatario. No se guardan claves n8n/OpenAI en la APK.
+- Protección: permiso de ubicación para nombre Wi-Fi, DNS y gateway observados, cifrado cuando Android permite leerlo. No certifica ausencia de MITM. Una red abierta/WEP produce advertencia; las simulaciones siguen siendo demostraciones. El botón de alerta evalúa el contenido de QR/enlace, no transmite una auditoría Wi-Fi automática.
+- Validación: APK debug compilada e instalada en un celular USB. Cámara física, QR desde galería, permisos y entrega de WhatsApp requieren verificación en el teléfono. El backend puede responder pendiente de configuración y no garantiza entrega.
+
+APK local: `app/build/outputs/apk/debug/app-debug.apk` dentro del proyecto Android original. La carpeta Android usa todavía el identificador original `com.example.controlremotobasurero`.

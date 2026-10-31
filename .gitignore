@@ -10,3 +10,16 @@ faro-qr*.png
 *.zip
 *.tar.gz
 *.log
+
+# Android
+.gradle/
+.idea/
+.kotlin/
+**/build/
+local.properties
+*.jks
+*.keystore
+*.before-faro
+android-update.py
+NativeTools.kt
+!android/app/src/main/java/com/example/controlremotobasurero/NativeTools.kt
