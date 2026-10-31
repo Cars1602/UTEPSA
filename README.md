@@ -68,6 +68,10 @@ $env:FARO_N8N_TOKEN="TU_SECRETO"
 python app.py
 ```
 
+## Crear y configurar el servidor AWS
+
+La [guía paso a paso del servidor AWS](docs/AWS-SERVIDOR.md) explica cómo lanzar EC2, configurar SSH y puertos, preparar Ubuntu/Docker, instalar Faro, publicar HTTPS con Caddy y conectar n8n, WhatsApp y Gmail. Distingue la infraestructura que ya existía de los cambios realizados durante este proyecto.
+
 ## Despliegue realizado en AWS
 Fecha del trabajo: 31 de octubre de 2026. Servidor Ubuntu en AWS, con n8n y Evolution API existentes en Docker. No se creó infraestructura con Terraform ni un balanceador adicional.
 
