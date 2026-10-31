@@ -91,7 +91,7 @@ fun NativeQrControls(onDecoded: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(enabled = !loading, onClick = {
-                camera.launch(ScanOptions().setDesiredBarcodeFormats(ScanOptions.QR_CODE).setPrompt("Escanea un QR · no se abrirá el enlace").setBeepEnabled(false).setOrientationLocked(false))
+                camera.launch(ScanOptions().setDesiredBarcodeFormats(ScanOptions.QR_CODE).setPrompt("Escanea un QR · no se abrirá el enlace").setBeepEnabled(false).setCaptureActivity(PortraitQrActivity::class.java).setOrientationLocked(true))
             }) { Text("Escanear QR") }
             OutlinedButton(enabled = !loading, onClick = { gallery.launch("image/*") }) { Text("Galería") }
         }

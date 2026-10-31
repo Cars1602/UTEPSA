@@ -149,3 +149,6 @@ El proyecto original está en `C:\android studio app\Controlremotobasurero`; una
 - Validación: APK debug compilada e instalada en un celular USB. Cámara física, QR desde galería, permisos y entrega de WhatsApp requieren verificación en el teléfono. El backend puede responder pendiente de configuración y no garantiza entrega.
 
 APK local: `app/build/outputs/apk/debug/app-debug.apk` dentro del proyecto Android original. La carpeta Android usa todavía el identificador original `com.example.controlremotobasurero`.
+
+## Corrección Android y activación WhatsApp
+El escáner usa PortraitQrActivity para mantener orientación vertical. La APK se recompiló e instaló en el celular de prueba. En AWS se añadió un flujo separado, Faro Android | Alertas WhatsApp activas, con webhook Header Auth y envío por Evolution. Faro carga su configuración mediante EnvironmentFile en systemd. Solo está habilitado el destinatario de prueba acordado; otros números requieren habilitación del administrador. Gmail mantiene su autorización pendiente. Una prueba con QR de permiso ilimitado devolvió riesgo 95 y notification=accepted; esto acredita aceptación del flujo, no lectura ni entrega final al teléfono.
