@@ -1,0 +1,9 @@
+mainn8n.duckdns.org {
+    redir /faro /faro/
+    handle_path /faro/* {
+        reverse_proxy 172.19.0.1:5060
+    }
+    handle {
+        reverse_proxy n8n:5678
+    }
+}

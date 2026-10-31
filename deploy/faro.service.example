@@ -1,0 +1,12 @@
+[Unit]
+Description=Faro web application
+After=network.target
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/faro-app
+ExecStart=/home/ubuntu/faro-app/.venv/bin/gunicorn --workers 1 --threads 4 --timeout 30 --bind 172.19.0.1:5060 app:app
+Restart=always
+NoNewPrivileges=true
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target

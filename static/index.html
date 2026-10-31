@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <title>Aprende a protegerte · QR, Wallet y Protección Wi-Fi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#080d11',
+            cardslate: '#121a22',
+            borderslate: '#1f2c3a',
+            cardteal: '#0c2624',
+            borderteal: '#1b4b45',
+            mint: '#4ce0b3',
+            mintdark: '#051814',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #080d11;
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+    .bottom-nav-item.active {
+      color: #4ce0b3;
+    }
+    .bottom-nav-item.active svg {
+      stroke: #4ce0b3;
+    }
+    .safe-bottom {
+      padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    }
+    .main-safe-pad {
+      padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="flex flex-col justify-between bg-obsidian">
+
+  <!-- TOP BAR RESPONSIVA -->
+  <header class="sticky top-0 z-30 bg-obsidian/95 backdrop-blur border-b border-borderslate/60">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+      <button onclick="handleBackClick()" class="flex items-center gap-2.5 text-slate-200 hover:text-mint active:scale-95 transition min-w-0">
+        <span class="text-lg sm:text-xl text-slate-400 shrink-0">←</span>
+        <span id="topBarTitle" class="text-sm sm:text-base font-semibold tracking-tight truncate">Aprende a protegerte</span>
+      </button>
+      <span class="px-2.5 sm:px-3 py-1 rounded-full bg-[#16202a] border border-[#263545] text-[10px] sm:text-[11px] font-bold tracking-wider text-slate-400 shrink-0">
+        DEMO
+      </span>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-4xl w-full mx-auto px-3.5 sm:px-6 py-4 sm:py-6 flex-1 space-y-5 main-safe-pad">
+
+    <!-- =================================================================== -->
+    <!-- VISTA 1: INICIO ("Aprende a protegerte" + Vista de Lecciones)        -->
+    <!-- En celular muestra una vista a la vez (Ruta o Lección) igual que    -->
+    <!-- una app nativa; en pantallas grandes muestra ambas lado a lado.     -->
+    <!-- =================================================================== -->
+    <section id="tab-view-inicio">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-start">
+
+        <!-- PANTALLA IZQUIERDA (Ruta de Aprendizaje) -->
+        <div id="mobileRoutePanel" class="space-y-4 sm:space-y-5 bg-[#0b1117] border border-borderslate rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl">
+          <div>
+            <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-mint block">CAPACITACIÓN · DESDE CERO</span>
+            <h1 class="text-2xl sm:text-3xl font-bold text-white mt-1.5 leading-tight">Más confianza.<br/>Un paso a la vez.</h1>
+            <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+              No necesitas saber de tecnología. Empieza con lo básico, a tu ritmo.
+            </p>
+          </div>
+
+          <!-- Tarjeta "Una pausa que ayuda" -->
+          <div onclick="openLesson(1, true)" class="cursor-pointer rounded-2xl bg-gradient-to-b from-[#102d2a] to-[#0b201e] border border-borderteal p-4 sm:p-5 space-y-3.5">
+            <div class="flex items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0 flex-1">
+                <h2 class="text-base sm:text-lg font-bold text-white">Una pausa que ayuda</h2>
+                <p class="text-xs text-slate-300 leading-relaxed">4 lecciones cortas para decidir con más claridad.</p>
+                <p class="text-[11px] sm:text-xs font-semibold text-mint pt-0.5">12 min en total · nivel inicial</p>
+              </div>
+              <!-- Anillo circular con libro adaptable -->
+              <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-[#1f4e48] flex items-center justify-center shrink-0">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-[#163834] flex items-center justify-center text-mint text-base sm:text-xl">
+                  📖
+                </div>
+                <span class="absolute top-0.5 right-1 w-2.5 h-2.5 rounded-full bg-mint shadow-md shadow-mint/50"></span>
+              </div>
+            </div>
+
+            <div class="space-y-2 pt-1">
+              <div class="flex justify-between text-[11px] sm:text-xs">
+                <span class="text-slate-400">Progreso de ejemplo</span>
+                <span id="progressText" class="text-mint font-bold">1 de 4 · 25 %</span>
+              </div>
+              <div id="progressSegments" class="grid grid-cols-4 gap-1.5">
+                <div class="h-1.5 rounded-full bg-mint"></div>
+                <div class="h-1.5 rounded-full bg-[#1d3b38]"></div>
+                <div class="h-1.5 rounded-full bg-[#1d3b38]"></div>
+                <div class="h-1.5 rounded-full bg-[#1d3b38]"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tu ruta, desde lo esencial -->
+          <div class="space-y-2.5 sm:space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm sm:text-base font-bold text-white">Tu ruta, desde lo esencial</h3>
+              <span class="text-xs text-slate-500">4 temas</span>
+            </div>
+
+            <div id="lessonsListContainer" class="space-y-2.5 sm:space-y-3"></div>
+          </div>
+
+          <p class="text-[11px] sm:text-xs text-slate-500 leading-relaxed">
+            Aprender ayuda a reconocer riesgos; no garantiza seguridad ni sustituye la verificación.
+          </p>
+
+          <div class="space-y-2.5 pt-1">
+            <div class="text-center text-xs text-slate-400">Siguiente · Tu wallet, sin misterios</div>
+            <button onclick="openLesson(2, true)" class="w-full min-h-[48px] py-3.5 rounded-2xl bg-mint hover:bg-[#3cd1a3] active:scale-[0.99] text-mintdark font-bold text-sm transition">
+              Continuar con wallets &nbsp; →
+            </button>
+            <button onclick="openLesson(1, false)" class="w-full py-1.5 text-center text-xs font-semibold text-mint hover:underline">
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+
+        <!-- PANTALLA DERECHA (Detalle de Lección Activa) -->
+        <div id="lessonDetailCard" class="hidden lg:block space-y-4 sm:space-y-5 bg-[#0b1117] border border-borderslate rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl"></div>
+
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 2: QR (Verificador Interactivo de Códigos QR)                 -->
+    <!-- =================================================================== -->
+    <section id="tab-view-qr" class="space-y-5 hidden">
+      <div class="bg-[#0b1117] border border-borderslate rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4">
+        <div>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-mint">VERIFICADOR DE DESTINO QR</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Mira el destino antes de abrir</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Toca un caso de prueba o pega el contenido de un QR para inspeccionar su destino real.</p>
+        </div>
+
+        <div id="qrPresetsContainer" class="flex overflow-x-auto no-scrollbar gap-2.5 pb-1 sm:grid sm:grid-cols-2 md:grid-cols-5"></div>
+
+        <div class="space-y-2.5">
+          <label class="block text-xs font-bold uppercase text-slate-300">Contenido del código QR escaneado:</label>
+          <div class="flex flex-col sm:flex-row gap-2.5">
+            <input id="qrPayloadInput" type="text" class="w-full flex-1 bg-cardslate border border-borderslate rounded-xl px-3.5 py-3 text-xs text-white font-mono focus:border-mint focus:outline-none" />
+            <button onclick="analyzeQrWallet('qr')" class="w-full sm:w-auto min-h-[46px] px-5 py-3 rounded-xl bg-mint hover:bg-[#3cd1a3] text-mintdark font-bold text-sm transition shrink-0">
+              Inspeccionar QR →
+            </button>
+          </div>
+        </div>
+
+        <div id="qrResultBox" class="space-y-4"></div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 3: WALLET (Tu wallet, sin misterios + Anti-Address Poisoning) -->
+    <!-- =================================================================== -->
+    <section id="tab-view-wallet" class="space-y-5 hidden">
+      <div class="bg-[#0b1117] border border-borderslate rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4">
+        <div>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-mint">PROTECCIÓN DE BILLETERA CRIPTO Y PAGOS</span>
+          <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Tu wallet, sin misterios</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Comprueba que la dirección no sea un clon con los mismos extremos (Address Poisoning) ni esté reportada por fraude.</p>
+        </div>
+
+        <div class="flex overflow-x-auto no-scrollbar gap-2 pb-1">
+          <button onclick="loadWalletSample('poison')" class="shrink-0 px-3.5 py-2.5 rounded-xl bg-cardslate border border-borderslate text-xs text-white hover:border-mint">
+            🎭 Probar Address Poisoning
+          </button>
+          <button onclick="loadWalletSample('usdt')" class="shrink-0 px-3.5 py-2.5 rounded-xl bg-cardslate border border-borderslate text-xs text-white hover:border-mint">
+            💰 Wallet USDT Reportada
+          </button>
+          <button onclick="loadWalletSample('clean')" class="shrink-0 px-3.5 py-2.5 rounded-xl bg-cardslate border border-borderslate text-xs text-white hover:border-mint">
+            ✅ Wallet Oficial Segura
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-bold text-white mb-1">1. Dirección Wallet a verificar:</label>
+            <input id="walletAddressInput" type="text" class="w-full bg-cardslate border border-borderslate rounded-xl px-3.5 py-3 text-xs text-white font-mono focus:border-mint focus:outline-none" value="0x71C80000009999888877776666555500000089A2" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-400 mb-1">2. Tu Wallet frecuente guardada:</label>
+            <input id="trustedWalletInput" type="text" class="w-full bg-cardslate border border-borderslate rounded-xl px-3.5 py-3 text-xs text-mint font-mono focus:border-mint focus:outline-none" value="0x71C845aB912cF40192837465aBcDeF12345689A2" />
+          </div>
+        </div>
+
+        <button onclick="analyzeQrWallet('wallet')" class="w-full sm:w-auto min-h-[46px] px-6 py-3 rounded-xl bg-mint hover:bg-[#3cd1a3] text-mintdark font-bold text-sm transition">
+          Verificar Dirección Wallet →
+        </button>
+
+        <div id="walletResultBox" class="space-y-4"></div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 4: PROTECCIÓN (Escudo Wi-Fi Anti-MITM + Enlaces Maliciosos)   -->
+    <!-- =================================================================== -->
+    <section id="tab-view-proteccion" class="space-y-5 hidden">
+      <div class="bg-[#0b1117] border border-borderslate rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-mint">PROTECCIÓN DE CONEXIÓN Y ENLACES</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Escudo de Red Wi-Fi y Enlaces</h2>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1">Detecta si la red Wi-Fi lee tu tráfico (ARP Spoofing / MITM) o si un enlace es malicioso.</p>
+          </div>
+          <button onclick="scanRealWifi()" class="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-xl bg-mint hover:bg-[#3cd1a3] text-mintdark font-bold text-xs transition shrink-0">
+            📡 Auditar Mi Red Wi-Fi Actual
+          </button>
+        </div>
+
+        <div id="wifiScenariosContainer" class="flex overflow-x-auto no-scrollbar gap-2.5 pb-1 sm:grid sm:grid-cols-2 lg:grid-cols-4"></div>
+        <div id="wifiResultContainer" class="space-y-4"></div>
+      </div>
+
+      <!-- Detector de Enlaces Phishing -->
+      <div class="bg-[#0b1117] border border-borderslate rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4">
+        <h3 class="text-base sm:text-lg font-bold text-white">Analizador de Enlaces Sospechosos (WhatsApp / SMS)</h3>
+        <div id="urlPresetsContainer" class="flex overflow-x-auto no-scrollbar gap-2.5 pb-1 sm:grid sm:grid-cols-5"></div>
+        <div class="flex flex-col sm:flex-row gap-2.5">
+          <input id="urlInput" type="text" class="w-full flex-1 bg-cardslate border border-borderslate rounded-xl px-3.5 py-3 text-xs text-white font-mono focus:border-mint focus:outline-none" />
+          <button onclick="analyzeUrl()" class="w-full sm:w-auto min-h-[46px] px-6 py-3 rounded-xl bg-mint hover:bg-[#3cd1a3] text-mintdark font-bold text-sm transition shrink-0">
+            Analizar Enlace →
+          </button>
+        </div>
+        <div id="urlResultContainer" class="space-y-4"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER & BOTTOM NAVIGATION BAR ADAPTABLE A CUALQUIER CELULAR -->
+  <footer class="fixed bottom-0 left-0 right-0 z-40 bg-[#0a1016]/95 backdrop-blur border-t border-[#151f28] safe-bottom">
+    <div class="max-w-4xl mx-auto px-4 pt-1.5 pb-1 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500">
+      <span class="truncate">♟ Demostración educativa · no es actividad real</span>
+      <span class="text-mint/80 font-medium hidden sm:inline">NetLink & Wallet Guard AI</span>
+    </div>
+    <div class="max-w-md mx-auto grid grid-cols-4 pt-1 text-xs">
+      <button onclick="switchBottomTab('inicio')" id="nav-inicio" class="bottom-nav-item active flex flex-col items-center justify-center py-1 gap-1 text-slate-500 hover:text-slate-300 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1v-9.5z"/></svg>
+        <span class="text-[10px] sm:text-[11px] font-medium">Inicio</span>
+      </button>
+      <button onclick="switchBottomTab('qr')" id="nav-qr" class="bottom-nav-item flex flex-col items-center justify-center py-1 gap-1 text-slate-500 hover:text-slate-300 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V6a2 2 0 012-2h2M4 16v2a2 2 0 002 2h2m8-16h2a2 2 0 012 2v2m-4 12h2a2 2 0 002-2v-2M8 12h8"/></svg>
+        <span class="text-[10px] sm:text-[11px] font-medium">QR</span>
+      </button>
+      <button onclick="switchBottomTab('wallet')" id="nav-wallet" class="bottom-nav-item flex flex-col items-center justify-center py-1 gap-1 text-slate-500 hover:text-slate-300 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="16.5" cy="12" r="1.5"/></svg>
+        <span class="text-[10px] sm:text-[11px] font-medium">Wallet</span>
+      </button>
+      <button onclick="switchBottomTab('proteccion')" id="nav-proteccion" class="bottom-nav-item flex flex-col items-center justify-center py-1 gap-1 text-slate-500 hover:text-slate-300 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v6c0 5-3.5 8.5-7 9-3.5-.5-7-4-7-9V6l7-3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg>
+        <span class="text-[10px] sm:text-[11px] font-medium">Protección</span>
+      </button>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

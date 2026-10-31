@@ -1,0 +1,144 @@
+{
+  "name": "Faro · WhatsApp y Gmail",
+  "nodes": [
+    {
+      "id": "input",
+      "name": "Registro entrante",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "faro-incidentes",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "options": {}
+      }
+    },
+    {
+      "id": "priority",
+      "name": "Priorizar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return items.map(item => { const e=item.json.body || item.json; const score=Number(e.risk_score); if (!Number.isFinite(score)||score<0||score>100) throw new Error('risk_score debe estar entre 0 y 100'); return {json:{risk_score:score, priority:score>=60?'ALTA':score>=25?'MEDIA':'BAJA', message:'Faro: riesgo '+score+'/100. Verifica el incidente en tu panel. No firmes operaciones sospechosas.'}}; });"
+      }
+    },
+    {
+      "id": "filter",
+      "name": "Solo riesgo alto",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.risk_score }}",
+              "operation": "largerEqual",
+              "value2": 60
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "whatsapp",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://TU-EVOLUTION/message/sendText/faro",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({number: \"CONFIGURAR_NUMERO_CON_PAIS\", text: $json.message}) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "gmail",
+      "name": "Enviar Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        160
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "DESTINATARIO@example.com",
+        "subject": "Alerta de seguridad Faro",
+        "emailType": "text",
+        "message": "={{ $json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Registro entrante": {
+      "main": [
+        [
+          {
+            "node": "Priorizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Priorizar": {
+      "main": [
+        [
+          {
+            "node": "Solo riesgo alto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solo riesgo alto": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Enviar Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
