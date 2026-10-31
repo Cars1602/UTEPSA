@@ -31,6 +31,11 @@ Estudiantes, personas que empiezan a usar criptomonedas y usuarios de wallets qu
 
 No es un agente LLM: el análisis actual usa reglas. No monitorea automáticamente todos los chats, no garantiza detectar fraudes y no bloquea transferencias blockchain. Los precios de mercado no constituyen una base de inteligencia de amenazas. Etherscan se propuso como ampliación; su API todavía no está integrada.
 
+## Escanear QR desde el celular
+Abre la app por HTTPS y pulsa **Escanear QR** para usar la cámara trasera, o **Subir QR** para elegir una foto. La lectura de imagen ocurre en el navegador; solo el contenido decodificado se manda al detector. No se abre el enlace automáticamente. El permiso de cámara debe concederse en el teléfono.
+
+Se comprobó en la web la carga de una imagen QR de laboratorio y su análisis: 95/100. La cámara física todavía requiere prueba en el celular del usuario. Biblioteca: [Nimiq qr-scanner 1.4.2](https://github.com/nimiq/qr-scanner), licencia MIT incluida en static/vendor/LICENSE.
+
 ## Cómo funciona
 1. El usuario pega un mensaje, enlace o contenido de QR/wallet.
 2. Flask llama al motor de detección y devuelve indicadores y puntaje.
