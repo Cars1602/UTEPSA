@@ -1497,158 +1497,31 @@ fun ProtectionWifiAndLinksTab(
     onLinkChange: (String) -> Unit,
     linkResult: QrWalletAnalysisResult
 ) {
+    LaunchedEffect(Unit) {
+        while (true) {
+            onScanRealWifi()
+            kotlinx.coroutines.delay(5000)
+        }
+    }
+    var showSignals by remember { mutableStateOf(false) }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = dimens.screenPadding, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(dimens.itemSpacing)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        item { Text("Tu conexión", color = TextWhite, fontSize = 25.sp, fontWeight = FontWeight.Bold) }
+        item { NativeNetworkCard(wifiResult, onScanRealWifi) }
+        item {
+            Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(CardSlate).padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text("Revisar enlace", color = TextWhite, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                OutlinedTextField(value = linkInput, onValueChange = onLinkChange, modifier = Modifier.fillMaxWidth(), maxLines = 3, label = { Text("Pega un mensaje o enlace") })
+                Text("${linkResult.riskScore}/100 · " + if (linkResult.riskScore >= 60) "Detente y verifica" else if (linkResult.riskScore >= 25) "Requiere revisión" else "Sin señales fuertes", color = if(linkResult.riskScore >= 60) DangerRed else MintPrimary)
+                if(linkResult.indicators.isNotEmpty()) Text(linkResult.indicators.first().title, color = TextMuted, fontSize = 12.sp)
+                TextButton(onClick = { showSignals = !showSignals }) { Text(if(showSignals) "Ocultar señales" else "Ver señales") }
+            }
+        }
+        if(showSignals) items(linkResult.indicators) { IndicatorCardStyled(it) }
         item { NativeAlertControls(linkInput, "enlace") }
-        item {
-            Text(
-                text = "PROTECCIÓN ACTIVA · WI-FI Y ENLACES",
-                color = MintPrimary,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Protege tu conexión y tus enlaces",
-                color = TextWhite,
-                fontSize = if (dimens.isSmallPhone) 22.sp else 25.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        item {
-            val isDanger = wifiResult.riskScore >= 50
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(if (isDanger) CardSlate else CardTealDark)
-                    .border(
-                        1.dp,
-                        if (isDanger) DangerRed.copy(alpha = 0.6f) else CardTealBorder,
-                        RoundedCornerShape(18.dp)
-                    )
-                    .padding(dimens.cardPadding),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = wifiResult.modeName,
-                            color = MintPrimary,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = wifiResult.statusTitle,
-                            color = if (isDanger) DangerRed else TextWhite,
-                            fontSize = dimens.cardTitleSize,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "${wifiResult.riskScore}/100",
-                        color = if (isDanger) DangerRed else MintPrimary,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
-
-                Text(
-                    text = "Red: ${wifiResult.ssid}\nCifrado: ${wifiResult.encryption}\nGateway: ${wifiResult.gateway}\nDNS: ${wifiResult.dnsServers}",
-                    color = TextMuted,
-                    fontSize = 11.sp,
-                    lineHeight = 17.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = onScanRealWifi,
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MintPrimary,
-                            contentColor = Color(0xFF051814)
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
-                    ) {
-                        Text("Auditar Mi Red", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
-                    }
-                    OutlinedButton(
-                        onClick = {
-                            onSimulateWifi(if (wifiResult.riskScore > 0) "clean_wpa3" else "mitm_arp")
-                        },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
-                    ) {
-                        Text(
-                            text = if (wifiResult.riskScore > 0) "Ver Red Segura" else "Simular MITM",
-                            color = MintPrimary,
-                            fontSize = 11.sp,
-                            maxLines = 1
-                        )
-                    }
-                }
-            }
-        }
-
-        items(wifiResult.threats) { threat ->
-            IndicatorCardStyled(threat)
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(CardSlate)
-                    .border(1.dp, CardSlateBorder, RoundedCornerShape(18.dp))
-                    .padding(dimens.cardPadding),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Text(
-                    text = "Detector de Enlaces Sospechosos",
-                    color = TextWhite,
-                    fontSize = dimens.cardTitleSize,
-                    fontWeight = FontWeight.Bold
-                )
-                OutlinedTextField(
-                    value = linkInput,
-                    onValueChange = onLinkChange,
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = LocalTextStyle.current.copy(
-                        color = TextWhite,
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily.Monospace
-                    ),
-                    maxLines = 3
-                )
-                Text(
-                    text = "Veredicto: ${linkResult.verdict} (${linkResult.riskScore}/100)",
-                    color = if (linkResult.riskScore >= 50) DangerRed else MintPrimary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-
-        items(linkResult.indicators) { ind ->
-            IndicatorCardStyled(ind)
-        }
     }
 }
 

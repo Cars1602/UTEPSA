@@ -29,7 +29,7 @@ import java.net.URL
 fun nativeWifiName(context: Context): String = try {
     val info = (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager).connectionInfo
     info.ssid?.trim('"')?.takeUnless { it == "<unknown ssid>" || it.isBlank() }
-        ?: "Nombre restringido: autoriza ubicación y activa ubicación del dispositivo"
+        ?: "Nombre oculto por Android"
 } catch (_: Exception) { "Nombre no disponible" }
 
 @Suppress("DEPRECATION")
@@ -107,11 +107,13 @@ fun NativeAlertControls(content: String, category: String) {
     var consent by rememberSaveable { mutableStateOf(false) }
     var status by remember { mutableStateOf("") }
     var sending by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     val location = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
         status = if(it) "Permiso concedido. Pulsa Auditar Mi Red." else "Sin permiso: el nombre de Wi-Fi puede estar oculto."
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if(category == "enlace") OutlinedButton(onClick = { location.launch(Manifest.permission.ACCESS_FINE_LOCATION) }) { Text("Permitir nombre Wi-Fi") }
+        TextButton(onClick = { expanded = !expanded }) { Text(if(expanded) "Ocultar alertas" else "Configurar alertas WhatsApp") }
+        if(expanded) {
         OutlinedTextField(value = number, onValueChange = { number = it.take(20) }, label = { Text("WhatsApp · +591…") }, singleLine = true, modifier = Modifier.fillMaxWidth())
         Row { Checkbox(checked = consent, onCheckedChange = { consent = it }); Text("Recibir alertas en este número") }
         Button(enabled = consent && !sending, onClick = {
@@ -148,5 +150,38 @@ fun NativeAlertControls(content: String, category: String) {
             }
         }) { Text(if(sending) "Enviando…" else "Enviar alerta WhatsApp") }
         if(status.isNotEmpty()) Text(status, style = MaterialTheme.typography.bodySmall)
+    }
+    }
+}
+
+@Composable
+fun NativeNetworkCard(result: WifiAuditResult, refresh: () -> Unit) {
+    val context = LocalContext.current
+    var detail by rememberSaveable { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        message = if(granted) "" else "Permiso denegado: el nombre puede estar oculto."
+        refresh()
+    }
+    val restricted = result.ssid.contains("oculto", true) || result.ssid.contains("disponible", true)
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("RED CONECTADA", style = MaterialTheme.typography.labelSmall)
+            Text(result.ssid, style = MaterialTheme.typography.headlineSmall)
+            Text(result.encryption, style = MaterialTheme.typography.bodyMedium)
+            Text(if(result.riskScore >= 60) "Red abierta o débil: evita operaciones sensibles" else if(result.riskScore >= 25) "Revisa la configuración" else "Lectura limitada · no certifica seguridad", style = MaterialTheme.typography.bodySmall)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { refresh() }) { Text("Actualizar") }
+                if(restricted) OutlinedButton(onClick = { permission.launch(Manifest.permission.ACCESS_FINE_LOCATION) }) { Text("Mostrar nombre") }
+            }
+            if(restricted) TextButton(onClick = { context.startActivity(android.content.Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }) { Text("Activar ubicación del teléfono") }
+            if(message.isNotEmpty()) Text(message, style = MaterialTheme.typography.bodySmall)
+            TextButton(onClick = { detail = !detail }) { Text(if(detail) "Ocultar detalles" else "Detalles de red") }
+            if(detail) {
+                Text("Gateway: "+result.gateway, style = MaterialTheme.typography.bodySmall)
+                Text("DNS: "+result.dnsServers, style = MaterialTheme.typography.bodySmall)
+                result.threats.forEach { Text(it.title, style = MaterialTheme.typography.bodySmall) }
+            }
+        }
     }
 }
